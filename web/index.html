@@ -9,7 +9,8 @@
 
 </head>
 <body>
-    <div class="ludo-container">
+    <!--Quitar display:none para mostrar de nuevo el tablero de juego-->
+    <div class="ludo-container" style="display: none;">
         <div class="ludo">
             <div class="player-pieces">
                 <div class="player-piece" player-id="P1" piece="0"></div>
@@ -37,18 +38,39 @@
             <h2 class="active-player">Active Player: <span></span> </h2>
         </div>
     </div>
-    <script src="./main.js" type="module"></script>
+    <!--<script src="./main.js" type="module"></script> -->
         <!-- Ejemplo de uso de la libreria eel
              El primer código que se ejecuta luego del html es UI.js
             Que se encarga del manejo de los clicks, botones y todo lo mostrado en el html
         -->
+    
+    <!--Sección de prueba para validar el funcionamiento adecuado de la 
+        logica del servidor -->
     <div class="container">
-        <h1>Sumador</h1>
-        <input type="number" id="num1" placeholder="Ingrese el primer número">
-        <input type="number" id="num2" placeholder="Ingrese el segundo número">
-        <button id="sumar">Sumar</button>
-        <div id="resultado"></div>
+        <div class="left-side">
+            <input type="text" id="name" placeholder="Nombre de usuario">
+            <select id="color">
+                <option value="red">Rojo</option>
+                <option value="blue">Azul</option>
+                <option value="green">Verde</option>
+                <option value="yellow">Amarillo</option>
+            </select>
+        </div>
+        <div class="right-side">
+            <h2>Jugadores conectados: 1/4</h2>
+            <ul id="player-list">
+                <p id="player1">jugador 1</p>
+            </ul>
+        </div>
     </div>
+
+    <div class="container">
+        <button id="connect">Conectar</button>
+        <button id="disconnect">Desconectar</button>
+    </div>
+
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="text/javascript" src="lobby.js"></script>
     <!--fin del ejemplo de uso de la libreria eel -->
 </body>
 </html>

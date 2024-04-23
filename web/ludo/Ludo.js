@@ -61,6 +61,18 @@ export class Ludo {
         
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * para escuchar el click en el boton de suma
      * y ejecutar la función onSumaClick
@@ -86,6 +98,22 @@ export class Ludo {
         });
         
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
     listenDiceClick() {
         UI.listenDiceClick(this.onDiceClick.bind(this))

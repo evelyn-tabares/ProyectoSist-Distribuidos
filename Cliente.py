@@ -5,25 +5,29 @@ import json
 # Inicializar eel
 eel.init('web')
 
-# Función para conectar con el servidor y enviar la suma
 @eel.expose
-def sumar_y_mostrar(num1, num2):
+#Función para enviar los datos del nuevo usuario al servidor
+def new_user(user_name, color_piece):
+    #Conectar al servidor
     try:
-        # Conectar al servidor
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect(('localhost', 8001))
 
-            #Ejemplo de uso libreria eel para sumar y mostrar------------
-            # Enviar datos al servidor en formato JSON
-            data = {'opcion': '1', 'num1': num1, 'num2': num2}
+            #Enviar datos al servidor en formato JSON
+            data = {'user_name': user_name, 'color_piece': color_piece}
             s.sendall(json.dumps(data).encode('utf-8'))
 
-            # Recibir resultado del servidor
+            #Recibir resultado del servidor
             resultado = s.recv(1024).decode('utf-8')
-            print(f"Resultado: {resultado}")
+            
+            print(f"Usuarios conectados: {resultado}")
+            
             return resultado
-            #Fin de ejemplo de uso libreria eel para sumar y mostrar------------
-
+            #El problema está aquí, porque al salir del 
+            #with, se cierra la conexión con el servidor y 
+            #el socket s no se puede usar más. Entonces, el 
+            #hilo del servidor no encuentra el socket que tiene
+            #cada objeto player y no puede hacer broadcast.
     except Exception as e:
         print("Error:", e)
 
