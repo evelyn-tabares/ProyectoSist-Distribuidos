@@ -4,15 +4,13 @@ import json
 
 # Inicializar eel
 eel.init('web')
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-@eel.expose
 #Función para enviar los datos del nuevo usuario al servidor
+@eel.expose
 def new_user(user_name, color_piece):
     #Conectar al servidor
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect(('localhost', 8001))
-
             #Enviar datos al servidor en formato JSON
             data = {'user_name': user_name, 'color_piece': color_piece}
             s.sendall(json.dumps(data).encode('utf-8'))
@@ -33,13 +31,23 @@ def new_user(user_name, color_piece):
 
 # Ejecutar la aplicación
 def start():
-    #Se inicia la aplicación en el archivo index.html
-    #Se ingresan los datos de los input y se envian al servidor 
-    #llamando a la función sumar_y_mostrar
-    #para que realice la suma y devuelva el resultado
-    #Se muestra el resultado en el div resultado
-    eel.start('index.html')
+    try:
+        # Connect to the serve
+        print("Connecting to the server...")
+        s.connect(('localhost', 8001))
+
+        # Start the application in the index.html file
+        # Input data is sent to the server by calling the sumar_y_mostrar function
+        # The function performs the sum and returns the result
+        # The result is displayed in the resultado div
+        eel.start('index.html')
+
+    except socket.error as e:
+        print("Error connecting to the server:", e)
+    except Exception as e:
+        print("An unexpected error occurred:", e)
     
 
 # Iniciar el cliente
 start()
+
