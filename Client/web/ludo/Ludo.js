@@ -81,7 +81,7 @@ export class Ludo {
     onSumaClick() {
         var num1 = document.getElementById("num1").value;
         var num2 = document.getElementById("num2").value;
-        eel.sumar_y_mostrar(num1, num2)(function(resultado) {
+        eel.sumar_y_mostrar()(function(resultado) {
             document.getElementById("resultado").innerText = "El resultado es: " + resultado;
         });
         
