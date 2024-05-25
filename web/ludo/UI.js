@@ -1,4 +1,4 @@
-import { COORDINATES_MAP, PLAYERS, STEP_LENGTH } from './constants.js';
+import { COORDINATES_MAP, STEP_LENGTH } from './constants.js';
 
 const diceButtonElement = document.querySelector('#dice-btn');
 const playerPiecesElements = {
@@ -53,7 +53,7 @@ export class UI {
         pieceElement.style.left = x * STEP_LENGTH + '%';
     }
 
-    static setTurn(index) {
+    static setTurn(index, PLAYERS) {
         if(index < 0 || index >= PLAYERS.length) {
             console.error('index out of bound!');
             return;

@@ -1,5 +1,7 @@
 import socket
 import json
+import constants  # Importa el módulo de constantes
+
 # Función para sumar dos números
 def sumar(num1, num2):
     return int(num1) + int(num2)
@@ -25,6 +27,15 @@ def manejar_solicitud(client_socket, address):
             resultado = sumar(num1, num2)
             response = str(resultado)
             client_socket.sendall(response.encode('utf-8'))
+
+        if opcion == '3':
+            # Enviar la constante PLAYERS al cliente
+            print("Enviando constante PLAYERS al cliente...")
+            response = json.dumps({'PLAYERS': constants.PLAYERS})
+            print("Enviando respuesta:", response)  # Mensaje de depuración
+
+            client_socket.sendall(response.encode('utf-8'))
+
         else:
             response = "Opción no válida"
             client_socket.sendall(response.encode('utf-8'))

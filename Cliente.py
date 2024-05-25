@@ -23,12 +23,36 @@ def sumar_y_mostrar(num1, num2):
     except Exception as e:
         print("Error:", e)
 
+
+@eel.expose
+def obtener_constants():
+    try:
+        data = {'opcion': '3'}
+        s.sendall(json.dumps(data).encode('utf-8'))
+
+        constants = s.recv(1024).decode('utf-8')
+        constants = json.loads(constants)
+        # if 'PLAYERS' in constants:
+        #     print("Players received from server:", constants)
+        #     constants = constants['PLAYERS']  # Assign the 'PLAYERS' array to 'players'
+        #     # process_players(players)  # Handle the received data
+        return constants
+    except json.JSONDecodeError:
+        print("Error: The server did not send a valid JSON.")
+
+# def process_players(players):
+#     for player in players['PLAYERS']:
+#         print("Player:", player)
+
+
 # Ejecutar la aplicación
 def start():
     try:
         # Connect to the serve
         print("Connecting to the server...")
         s.connect(('localhost', 8001))
+
+        obtener_constants()
 
         # Start the application in the index.html file
         # Input data is sent to the server by calling the sumar_y_mostrar function

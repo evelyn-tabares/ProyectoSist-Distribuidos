@@ -1,5 +1,7 @@
-import { BASE_POSITIONS, HOME_ENTRANCE, HOME_POSITIONS, PLAYERS, SAFE_POSITIONS, START_POSITIONS, STATE, TURNING_POINTS } from './constants.js';
+import { BASE_POSITIONS, HOME_ENTRANCE, HOME_POSITIONS, SAFE_POSITIONS, START_POSITIONS, STATE, TURNING_POINTS } from './constants.js';
 import { UI } from './UI.js';
+
+// PLAYERS
 
 export class Ludo {
     currentPositions = {
@@ -27,7 +29,7 @@ export class Ludo {
     }
     set turn(value) {
         this._turn = value;
-        UI.setTurn(value);
+        UI.setTurn(value, this.PLAYERS);
     }
 
     _state;
@@ -46,6 +48,12 @@ export class Ludo {
     }
 
     constructor() {
+        eel.obtener_constants()(CONSTANTS => {
+            this.PLAYERS = CONSTANTS.PLAYERS;
+            console.log("Players recibidos del servidor:", this.PLAYERS);
+            this.resetGame();
+        });
+    
         console.log('Hello World! Lets play Ludo!');
         this.listenSumaClick();
 
@@ -54,7 +62,7 @@ export class Ludo {
         this.listenResetClick();
         this.listenPieceClick();
 
-        this.resetGame();
+        // this.resetGame();
         
         
     }
@@ -98,7 +106,7 @@ export class Ludo {
     }
 
     checkForEligiblePieces() {
-        const player = PLAYERS[this.turn];
+        const player = this.PLAYERS[this.turn];
         // eligible pieces of given player
         const eligiblePieces = this.getEligiblePieces(player);
         if(eligiblePieces.length) {
@@ -110,7 +118,7 @@ export class Ludo {
     }
 
     incrementTurn() {
-        this.turn = (this.turn + 1) % PLAYERS.length; 
+        this.turn = (this.turn + 1) % this.PLAYERS.length; 
         this.state = STATE.DICE_NOT_ROLLED;
     }
 
@@ -148,7 +156,7 @@ export class Ludo {
         console.log('reset game');
         this.currentPositions = structuredClone(BASE_POSITIONS);
 
-        PLAYERS.forEach(player => {
+        this.PLAYERS.forEach(player => {
             [0, 1, 2, 3].forEach(piece => {
                 this.setPiecePosition(player, piece, this.currentPositions[player][piece])
             })
@@ -226,7 +234,7 @@ export class Ludo {
         const currentPosition = this.currentPositions[player][piece];
         let kill = false;
 
-        PLAYERS.forEach(opponent => {
+        this.PLAYERS.forEach(opponent => {
             if(opponent !== player) {
                 [0, 1, 2, 3].forEach(piece => {
                     const opponentPosition = this.currentPositions[opponent][piece];
