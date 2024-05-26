@@ -19,14 +19,14 @@
         const socket = await io("http://localhost:8002");
         window.ludoSocket = socket;
     </script>
-    <table id="roomsTable">
+    <table id="roomsTable" style="display: none;">
         <tr>
             <th>Room Name</th>
             <th>Password</th>
             <th>Number of Players</th>
         </tr>
     </table>
-    <div class="ludo-container">
+    <div class="ludo-container" style="display: none;">
         <div class="ludo">
             <div class="player-pieces">
                 <div class="player-piece" player-id="P1" piece="0"></div>
@@ -72,7 +72,7 @@
              El primer código que se ejecuta luego del html es UI.js
             Que se encarga del manejo de los clicks, botones y todo lo mostrado en el html
         -->
-    <form id="createRoomForm">
+    <form id="createRoomForm" style="display: none;">
         <label for="name">Name:</label><br>
         <input type="text" id="name" name="name"><br><br>
 
