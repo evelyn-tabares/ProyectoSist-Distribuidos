@@ -4,6 +4,8 @@ const diceButtonElement = document.querySelector('#dice-btn');
 const playerPiecesElements = {
     P1: document.querySelectorAll('[player-id="P1"].player-piece'),
     P2: document.querySelectorAll('[player-id="P2"].player-piece'),
+    P3: document.querySelectorAll('[player-id="P3"].player-piece'),
+    P4: document.querySelectorAll('[player-id="P4"].player-piece'),
 }
 
 export class UI {
@@ -15,9 +17,9 @@ export class UI {
      * 
      */ 
      
-    static listenSumaClick(callback) {
-        document.querySelector('button#sumar').addEventListener('click', callback);
-    }
+    // static listenSumaClick(callback) {
+    //     document.querySelector('button#sumar').addEventListener('click', callback);
+    // }
 
     
     static listenDiceClick(callback) {

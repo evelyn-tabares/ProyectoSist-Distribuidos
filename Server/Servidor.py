@@ -14,6 +14,7 @@ env_vars = dotenv_values(env_path)
 HOST = env_vars.get("SERVER_SOCKET_HOST")
 PORT = int(env_vars.get("SERVER_SOCKET_PORT"))
 
+
 sio = socketio.Server(cors_allowed_origins="*")
 app = socketio.WSGIApp(sio)
 

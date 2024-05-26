@@ -12,8 +12,6 @@ function submitForm() {
     socket.emit('create_game_room', data)
 }
 
-
-
 function updateRoomsList(rooms) {
     const tableBody = document.getElementById('roomsTable').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = '';

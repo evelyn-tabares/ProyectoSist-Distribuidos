@@ -1,14 +1,12 @@
 import { BASE_POSITIONS, HOME_ENTRANCE, HOME_POSITIONS, PLAYERS, SAFE_POSITIONS, START_POSITIONS, STATE, TURNING_POINTS } from './constants.js';
 import { UI } from './UI.js';
 
-
-
-
-
 export class Ludo {
     currentPositions = {
         P1: [],
-        P2: []
+        P2: [],
+        P3: [],
+        P4: [],
     }
 
    
@@ -49,7 +47,7 @@ export class Ludo {
 
     constructor() {
         console.log('Hello World! Lets play Ludo!');
-        this.listenSumaClick();
+        // this.listenSumaClick();
 
      
         this.listenDiceClick();
@@ -81,7 +79,7 @@ export class Ludo {
     onSumaClick() {
         var num1 = document.getElementById("num1").value;
         var num2 = document.getElementById("num2").value;
-        eel.sumar_y_mostrar()(function(resultado) {
+        eel.sumar_y_mostrar(num1, num2)(function(resultado) {
             document.getElementById("resultado").innerText = "El resultado es: " + resultado;
         });
         
@@ -112,7 +110,7 @@ export class Ludo {
     }
 
     incrementTurn() {
-        this.turn = this.turn === 0 ? 1 : 0;
+        this.turn = (this.turn + 1) % PLAYERS.length; 
         this.state = STATE.DICE_NOT_ROLLED;
     }
 
@@ -226,16 +224,18 @@ export class Ludo {
 
     checkForKill(player, piece) {
         const currentPosition = this.currentPositions[player][piece];
-        const opponent = player === 'P1' ? 'P2' : 'P1';
-
         let kill = false;
 
-        [0, 1, 2, 3].forEach(piece => {
-            const opponentPosition = this.currentPositions[opponent][piece];
+        PLAYERS.forEach(opponent => {
+            if(opponent !== player) {
+                [0, 1, 2, 3].forEach(piece => {
+                    const opponentPosition = this.currentPositions[opponent][piece];
 
-            if(currentPosition === opponentPosition && !SAFE_POSITIONS.includes(currentPosition)) {
-                this.setPiecePosition(opponent, piece, BASE_POSITIONS[opponent][piece]);
-                kill = true
+                    if(currentPosition === opponentPosition && !SAFE_POSITIONS.includes(currentPosition)) {
+                        this.setPiecePosition(opponent, piece, BASE_POSITIONS[opponent][piece]);
+                        kill = true
+                    }
+                });
             }
         });
 
