@@ -13,7 +13,7 @@
 <script type="text/javascript" src="UI.js"></script>
 
 <body>
-    <button id="dagewoi">click</button>
+    <!--<button id="dagewoi">click</button>-->
     <script type="module">
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
         const socket = await io("http://localhost:8002");
@@ -45,9 +45,9 @@
     
 <!--Sección de prueba para validar el funcionamiento adecuado de la 
         logica del servidor -->
-        <div class="container">
+        <div class="container" id="container">
             <div class="left-side">
-                <input type="text" id="name" placeholder="Nombre de usuario">
+                <input type="text" id="user_name" placeholder="Nombre de usuario">
                 <select id="color">
                     <option value="red">Rojo</option>
                     <option value="blue">Azul</option>
@@ -58,15 +58,18 @@
             <div class="right-side">
                 <h2>Jugadores conectados: </h2>
                 <ul id="player-list">
-                    <p id="player1">jugador 1</p>
+                    <!--Se llena de manera automatica consultando al servidor-->
                 </ul>
+            </div>
+            <div class="container">
+                <button id="connect">Conectar</button>
+                <button id="disconnect">Desconectar</button>
             </div>
         </div>
     
-        <div class="container">
-            <button id="connect">Conectar</button>
-            <button id="disconnect">Desconectar</button>
-        </div>
+        
+
+        <div id="countdown" display="none">5</div>
 
 
 
@@ -84,7 +87,7 @@
 
 
 
-    <div class="ludo-container" style="display: none;">
+    <div class="ludo-container" id="ludo-container" style="display: none;">
         <div class="ludo">
             <div class="player-pieces">
                 <div class="player-piece" player-id="P1" piece="0"></div>

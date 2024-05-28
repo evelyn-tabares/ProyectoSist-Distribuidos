@@ -4,6 +4,7 @@ class App:
     def __init__(self):
         self.__rooms = {}
         self.__players = {}
+        self.__game = None
 
     # Crear un nuevo jugador
     def create_player(self, data):
@@ -21,6 +22,14 @@ class App:
             "status": status
         }
         return {"success": True, "name": name, "color_piece": color_piece, "status": status, "message": f"Player '{name}' created successfully."}   
+    
+    # Eliminar un jugador
+    def remove_player(self, name):
+        if name in self.__players:
+            del self.__players[name]
+            return {"success": True, "message": f"Player '{name}' removed successfully."}
+        else:
+            return {"success": False, "message": f"Player '{name}' does not exist."}
 
     '''def create_room(self, data):
         name = data["name"]
@@ -45,4 +54,10 @@ class App:
     # Obtener la lista de jugadores conectados
     def get_players(self):
         return self.__players
+    
+    def set_game(self, game):
+        self.__game = game
+
+    def get_game(self):
+        return self.__game
 
