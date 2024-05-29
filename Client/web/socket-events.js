@@ -42,6 +42,13 @@ document.getElementById('disconnect').addEventListener('click', async () => {
     document.getElementById('color').disabled = false;
 });
 
+// Evaluar los errores que pueden ocurrir al crear un jugador
+socket.on('error_crte_player', result => {
+    if (result['success'] === false) {
+        alert(result['message']);
+    }
+});
+
 //Mostrar la lista de jugadores conectados
 socket.on('users_list_update', players => {
     const playersList = document.getElementById('player-list');
@@ -60,11 +67,19 @@ socket.on('users_list_update', players => {
     }
 });
 
+// Empezar el juego de manera automatica cuando por lo menos hay 2 jugadores conectados
 socket.on('start_game', game_status => {
     if (game_status) {
         game_ready = true;
+        document.getElementById('disconnect').style.disabled = true;
         const countdownElement = document.getElementById('countdown');
         let time = 5;
+
+        document.getElementById('connect').textContent = 'Conectado';
+        document.getElementById('connect').disabled = true;
+        document.getElementById('user_name').disabled = true;
+        document.getElementById('color').disabled = true;
+        document.getElementById('disconnect').disabled = true;
 
         setInterval(() => {
             countdownElement.textContent = time;

@@ -5,6 +5,7 @@ class App:
         self.__rooms = {}
         self.__players = {}
         self.__game = None
+        self.__avaliable_pieces = ['red', 'blue', 'green', 'yellow']
 
     # Crear un nuevo jugador
     def create_player(self, data):
@@ -15,12 +16,21 @@ class App:
         
         if name in self.__players:
             return {"success": False, "message": f"Player '{name}' already exists."}
+        
+        # Verificar si el color de la pieza seleccionada por el jugador ya fue seleccionado por otro jugador
+        for player in self.__players:
+            if self.__players[player]["color_piece"] == color_piece:
+                return {"success": False, "message": f"Color '{color_piece}' already selected by another player."}
 
         self.__players[name] = {
             "name": name,
             "color_piece": color_piece,
             "status": status
         }
+
+        # Borrar el color de la lista de colores disponibles
+        self.__avaliable_pieces.remove(color_piece)
+
         return {"success": True, "name": name, "color_piece": color_piece, "status": status, "message": f"Player '{name}' created successfully."}   
     
     # Eliminar un jugador
@@ -54,10 +64,15 @@ class App:
     # Obtener la lista de jugadores conectados
     def get_players(self):
         return self.__players
+
+    def get_game(self):
+        return self.__game
+    
+    def get_pieces(self):
+        return self.__avaliable_pieces
     
     def set_game(self, game):
         self.__game = game
 
-    def get_game(self):
-        return self.__game
+
 
