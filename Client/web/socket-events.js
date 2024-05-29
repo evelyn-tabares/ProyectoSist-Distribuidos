@@ -46,6 +46,10 @@ document.getElementById('disconnect').addEventListener('click', async () => {
 socket.on('error_crte_player', result => {
     if (result['success'] === false) {
         alert(result['message']);
+        document.getElementById('connect').textContent = 'Conectar';
+        document.getElementById('connect').disabled = false;
+        document.getElementById('user_name').disabled = false;
+        document.getElementById('color').disabled = false;
     }
 });
 
@@ -97,14 +101,16 @@ socket.on('start_game', game_status => {
 
 
 //actualizar la lista de jugadores cada segundo
-setInterval(async () => {
+
+
+/*setInterval(async () => {
     if (game_ready) {
         return;
     }
 
     console.log('update players list');
     socket.emit('update_players_list', {});
-}, 1000);
+}, 1000);*/
 
 //actualizar la lista de jugadores cada segundo
 

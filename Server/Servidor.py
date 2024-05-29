@@ -54,6 +54,7 @@ def check_connected_players():
         else:
             print("No hay suficientes jugadores conectados")
         
+        sio.emit("users_list_update", ludo.get_players())
         sio.sleep(1)        
 
 '''@sio.event
