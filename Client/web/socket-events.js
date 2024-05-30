@@ -1,6 +1,22 @@
 const socket = window.ludoSocket
 let game_ready = false;
 
+
+// Al cargar la página, se debe verificar si el juego ya empezó
+
+document.addEventListener('DOMContentLoaded', async () => {
+    socket.emit('check_game_status');
+    
+    socket.on('game_started', game_status => {
+        game_ready = game_status;
+
+        if (game_ready) {
+            alert('El juego ya ha empezado');
+        }
+    });        
+});
+
+
 //Función que permite conectarse al servidor de la aplicación
 document.getElementById('connect').addEventListener('click', async () => {
     const username = document.getElementById('user_name').value;
@@ -24,32 +40,24 @@ document.getElementById('connect').addEventListener('click', async () => {
     
     socket.emit('create_player', data);
     //cambiar mensaje del botón connect de Conectar a Conectado e inhabilitar el botón
-    document.getElementById('connect').textContent = 'Conectado';
-    document.getElementById('connect').disabled = true;
-    document.getElementById('user_name').disabled = true;
-    document.getElementById('color').disabled = true;
+    change_btns_lobby('connect');
 });
 
 
 //Función que permite desconectarse del servidor del juego
 document.getElementById('disconnect').addEventListener('click', async () => {
     const user_name = document.getElementById('user_name').value;
-    socket.emit('disconnect_player', user_name);
+    socket.emit('disconnect_player');
+    //socket.emit('disconnect_player', user_name);
     //cambiar mensaje del botón connect de Conectado a Conectar e habilitar el botón
-    document.getElementById('connect').textContent = 'Conectar';
-    document.getElementById('connect').disabled = false;
-    document.getElementById('user_name').disabled = false;
-    document.getElementById('color').disabled = false;
+    change_btns_lobby('disconnect');
 });
 
 // Evaluar los errores que pueden ocurrir al crear un jugador
 socket.on('error_crte_player', result => {
     if (result['success'] === false) {
         alert(result['message']);
-        document.getElementById('connect').textContent = 'Conectar';
-        document.getElementById('connect').disabled = false;
-        document.getElementById('user_name').disabled = false;
-        document.getElementById('color').disabled = false;
+        change_btns_lobby('disconnect');
     }
 });
 
@@ -74,16 +82,11 @@ socket.on('users_list_update', players => {
 // Empezar el juego de manera automatica cuando por lo menos hay 2 jugadores conectados
 socket.on('start_game', game_status => {
     if (game_status) {
+        change_btns_lobby('connect');
+        document.getElementById('disconnect').disabled = true;
         game_ready = true;
-        document.getElementById('disconnect').style.disabled = true;
         const countdownElement = document.getElementById('countdown');
         let time = 5;
-
-        document.getElementById('connect').textContent = 'Conectado';
-        document.getElementById('connect').disabled = true;
-        document.getElementById('user_name').disabled = true;
-        document.getElementById('color').disabled = true;
-        document.getElementById('disconnect').disabled = true;
 
         setInterval(() => {
             countdownElement.textContent = time;
@@ -98,6 +101,23 @@ socket.on('start_game', game_status => {
         }, 1000);
     }
 });
+
+// Función para cambiar el boton de conectar y desconectar dependiendo de la acción que se realice o los
+// errores que puedan ocurrir
+function change_btns_lobby(action){
+    if (action === 'connect') {
+        document.getElementById('connect').textContent = 'Conectado';
+        document.getElementById('connect').disabled = true;
+        document.getElementById('user_name').disabled = true;
+        document.getElementById('color').disabled = true;
+    } else if (action === 'disconnect') {
+        document.getElementById('connect').textContent = 'Conectar';
+        document.getElementById('connect').disabled = false;
+        document.getElementById('user_name').disabled = false;
+        document.getElementById('color').disabled = false;
+    }
+}
+
 
 
 //actualizar la lista de jugadores cada segundo

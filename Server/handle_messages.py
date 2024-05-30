@@ -14,13 +14,18 @@ class App:
         color_piece = data["color_piece"]
         status = data["status"]
         
+        print("avaliable_pieces", self.__avaliable_pieces)
+
         if name in self.__players:
             return {"success": False, "message": f"Player '{name}' already exists."}
         
         # Verificar si el color de la pieza seleccionada por el jugador ya fue seleccionado por otro jugador
-        for player in self.__players:
+        if self.__avaliable_pieces.count(color_piece) == 0:
+            return {"success": False, "message": f"Color '{color_piece}' already selected by another player."}
+        
+        '''for player in self.__players:
             if self.__players[player]["color_piece"] == color_piece:
-                return {"success": False, "message": f"Color '{color_piece}' already selected by another player."}
+                return {"success": False, "message": f"Color '{color_piece}' already selected by another player."}'''
 
         self.__players[name] = {
             "name": name,
@@ -36,6 +41,7 @@ class App:
     # Eliminar un jugador
     def remove_player(self, name):
         if name in self.__players:
+            self.__avaliable_pieces.append(self.__players[name]["color_piece"])
             del self.__players[name]
             return {"success": True, "message": f"Player '{name}' removed successfully."}
         else:

@@ -24,9 +24,10 @@ def create_player(sid, data):
     result = ludo.create_player(data)
     #print(result))
     if result['success']:
+        clients[sid] = data['user_name']
         sio.emit("users_list_update", ludo.get_players())
     else:
-        sio.emit("error_crte_player", result)
+        sio.emit("error_crte_player", result, to=sid)
 
 # Actualizar la lista de jugadores en el lobby cada segundo
 @sio.event
@@ -36,10 +37,17 @@ def update_players_list(sid, data):
 
 # Eliminar un jugador cuando se desconecta del lobby
 @sio.event
-def disconnect_player(sid, data):
+def disconnect_player(sid):
     #print('disconnect ', sid)
-    ludo.remove_player(data)
+    player_name = clients.pop(sid, None)
+    if player_name:
+        ludo.remove_player(player_name)
     sio.emit("users_list_update", ludo.get_players())
+
+@sio.event
+def check_game_status(sid):
+    print("check_game_status")
+    sio.emit("game_started", ludo.get_game(), to=sid)
 
 # Función que se ejecuta en segundo plano y verifica si hay minimo 2 jugadores conectados.
 def check_connected_players():
