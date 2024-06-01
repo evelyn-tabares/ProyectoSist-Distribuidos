@@ -52,7 +52,7 @@ document.getElementById('disconnect').addEventListener('click', async () => {
 });
 
 // Conectarse a un juego que está en curso
-document.getElementById('connect2').addEventListener('click', async () => {
+/*document.getElementById('connect2').addEventListener('click', async () => {
     const username = document.getElementById('user_name2').value;
     const color_piece = document.getElementById('color2').value;
 
@@ -74,7 +74,7 @@ document.getElementById('connect2').addEventListener('click', async () => {
     }
 
     socket.emit('create_player', data);
-});
+});*/
 
 // Mostrar la información de espacios disponibles en la sala de espera cuando
 // la partida ya está en curso
@@ -211,7 +211,16 @@ function activate_room() {
     socket.on('game_started', game_status => {
         //game_ready = game_status;
         if (game_status['run'] === true) {
-            if (game_status['all_players'] === false) {
+            document.getElementById('container').style.display = 'none';
+            document.getElementById('container2').style.display = 'block';
+            //document.getElementById('connect2').disabled = true;
+
+            const num_info = document.getElementById('spaces');
+            const listItem = document.createElement('h1');
+            num_info.innerHTML = '';
+            listItem.textContent = `El juego esta completo. Intente más tarde`;
+            num_info.appendChild(listItem);
+            /*if (game_status['all_players'] === false) {
                 
                 //ocultar container y mostrar container2
                 document.getElementById('container').style.display = 'none';
@@ -241,8 +250,8 @@ function activate_room() {
                         listItem.textContent = text_color
                         colorsList.appendChild(listItem);
                     }
-                });
-            }else{
+                });*/
+            /*}else{
                 document.getElementById('container').style.display = 'none';
                 document.getElementById('container2').style.display = 'block';
                 document.getElementById('connect2').disabled = true;
@@ -252,7 +261,7 @@ function activate_room() {
                 num_info.innerHTML = '';
                 listItem.textContent = `El juego esta completo, pero puede ingresar como espectador`;
                 num_info.appendChild(listItem);
-            }
+            }*/
         }else{
             //mostrar container y ocultar container2
             document.getElementById('container').style.display = 'block';

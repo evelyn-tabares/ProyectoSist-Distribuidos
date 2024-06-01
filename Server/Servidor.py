@@ -61,11 +61,12 @@ def check_game_status(sid):
     #print("check_game_status")
     
     if ludo.get_game() == True:
-        if len(ludo.get_players()) < 4:
+        sio.emit("game_started", {"run": ludo.get_game(), "all_players": True}, to=sid)
+        '''if len(ludo.get_players()) < 4:
             count_players = sio.start_background_task(check_num_players)
             sio.emit("game_started", {"run": ludo.get_game(), "all_players": False}, to=sid)
         elif len(ludo.get_players()) == 4:
-            sio.emit("game_started", {"run": ludo.get_game(), "all_players": True}, to=sid)
+            sio.emit("game_started", {"run": ludo.get_game(), "all_players": True}, to=sid)'''
     else:
         sio.emit("game_started", {"run": ludo.get_game(), "all_players": False}, to=sid)
         conected_players = sio.start_background_task(check_connected_players)
@@ -121,7 +122,6 @@ def check_connected_players():
 def lobby_to_waiting_room():
     while True:
         if ludo.get_game() == True:
-            
             sio.emit("active_wating_room", ludo.get_game())
             break
         else:

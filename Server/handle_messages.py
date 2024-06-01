@@ -17,7 +17,7 @@ class App:
         #print("avaliable_pieces", self.__avaliable_pieces)
 
         if name in self.__players:
-            return {"success": False, "message": f"Player '{name}' ya existe."}
+            return {"success": False, "message": f"Jugador '{name}' ya existe."}
         
         # Verificar si el color de la pieza seleccionada por el jugador ya fue seleccionado por otro jugador
         if self.__avaliable_pieces.count(color_piece) == 0:
