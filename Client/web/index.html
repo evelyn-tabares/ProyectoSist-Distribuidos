@@ -8,9 +8,26 @@
     <link rel="stylesheet" href="./ludo/style.css">
     <link rel="stylesheet" href="styles.css">
 
+    <style>
+        /* Estilos para el fondo transparente de la cuenta regresiva */
+        #countdown-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<script type="text/javascript" src="/eel.js"></script>
-<script type="text/javascript" src="UI.js"></script>
 
 <body>
     <!--<button id="dagewoi">click</button>-->
@@ -19,6 +36,11 @@
         const socket = await io("http://localhost:8002");
         window.ludoSocket = socket;
     </script>
+
+    <div id="countdown-overlay" style="display: none;">
+        <div id="countdown">5</div>
+    </div>
+
     <table id="roomsTable" style="display: none;">
         <tr>
             <th>Room Name</th>
@@ -27,65 +49,47 @@
         </tr>
     </table>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-<!--Sección de prueba para validar el funcionamiento adecuado de la 
-        logica del servidor -->
-        <div class="container" id="container">
-            <div class="left-side">
-                <input type="text" id="user_name" placeholder="Nombre de usuario">
-                <select id="color">
-                    <option value="red">Rojo</option>
-                    <option value="blue">Azul</option>
-                    <option value="green">Verde</option>
-                    <option value="yellow">Amarillo</option>
-                </select>
-            </div>
-            <div class="right-side">
-                <h2>Jugadores conectados: </h2>
-                <ul id="player-list">
-                    <!--Se llena de manera automatica consultando al servidor-->
-                </ul>
-            </div>
-            <div class="container">
-                <button id="connect">Conectar</button>
-                <button id="disconnect">Desconectar</button>
-            </div>
+    <!-- Formulario de registro cuando el juego no ha empezado -->
+    <div class="container" id="container" style="display: none;">
+        <div class="left-side">
+            <input type="text" id="user_name" placeholder="Nombre de usuario">
+            <select id="color">
+                <option value="red">Rojo</option>
+                <option value="blue">Azul</option>
+                <option value="green">Verde</option>
+                <option value="yellow">Amarillo</option>
+            </select>
         </div>
-    
-        
+        <div class="right-side">
+            <h2>Jugadores conectados: </h2>
+            <ul id="player-list">
+                <!--Se llena de manera automatica consultando al servidor-->
+            </ul>
+        </div>
+        <div class="container">
+            <button id="connect">Conectar</button>
+            <button id="disconnect">Desconectar</button>
+            <button id="start">Iniciar Partida</button>
+        </div>
+    </div>
 
-        <div id="countdown" display="none">5</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <!--Formulario de registro cuando el juego ya empezó-->
+    <div class="container" id="container2" style="display: none;">
+        <h1>juego en progreso</h1>
+        <div class="left-side">
+            <input type="text" id="user_name2" placeholder="Nombre de usuario">
+            <select id="color2">
+                <!-- Se llena de manera automatica consultando al servidor por las fichas disponibles -->
+            </select>
+        </div>
+        <div class="right-side" id="spaces">
+            <h2>Espacios disponibles: </h2>
+        </div>
+        <div class="container">
+            <button id="connect2">Unirse</button>
+            <button id="disconnect2">Espectador</button>
+        </div>
+    </div>
 
     <div class="ludo-container" id="ludo-container" style="display: none;">
         <div class="ludo">
@@ -127,12 +131,12 @@
             <h2 class="active-player">Active Player: <span></span> </h2>
         </div>
     </div>
+
     <script src="./main.js" type="module"></script>
 
-    <!-- Ejemplo de uso de la libreria eel
-             El primer código que se ejecuta luego del html es UI.js
-            Que se encarga del manejo de los clicks, botones y todo lo mostrado en el html
-        -->
+    <!-- Ejemplo de uso de la libreria eel -->
+    <!-- El primer código que se ejecuta luego del html es UI.js -->
+    <!-- Que se encarga del manejo de los clicks, botones y todo lo mostrado en el html -->
     <form id="createRoomForm" style="display: none;">
         <label for="name">Name:</label><br>
         <input type="text" id="name" name="name"><br><br>
@@ -147,7 +151,7 @@
 
         <h1 id="response"></h1>
     </form>
-    <script src="./socket-events.js" type="module"></script> 
+    <script src="./socket-events.js" type="module"></script>
     <!--fin del ejemplo de uso de la libreria eel-->
 </body>
 

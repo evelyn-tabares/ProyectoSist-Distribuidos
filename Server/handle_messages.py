@@ -4,7 +4,7 @@ class App:
     def __init__(self):
         self.__rooms = {}
         self.__players = {}
-        self.__game = None
+        self.__game = False
         self.__avaliable_pieces = ['red', 'blue', 'green', 'yellow']
 
     # Crear un nuevo jugador
@@ -75,6 +75,9 @@ class App:
         return self.__game
     
     def get_pieces(self):
+        return self.__avaliable_pieces
+    
+    def get_available_colors(self):
         return self.__avaliable_pieces
     
     def set_game(self, game):

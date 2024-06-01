@@ -3,21 +3,68 @@ let game_ready = false;
 
 
 // Al cargar la página, se debe verificar si el juego ya empezó
-
 document.addEventListener('DOMContentLoaded', async () => {
     socket.emit('check_game_status');
-    
-    socket.on('game_started', game_status => {
-        game_ready = game_status;
 
-        if (game_ready) {
-            alert('El juego ya ha empezado');
+    socket.on('game_started', game_status => {
+        //game_ready = game_status;
+        if (game_status['run'] === true) {
+            if (game_status['all_players'] === false) {
+                
+                //ocultar container y mostrar container2
+                document.getElementById('container').style.display = 'none';
+                document.getElementById('container2').style.display = 'block';
+
+                //consultar colores de las fichas disponibles
+                socket.emit('get_available_colors');
+                socket.on('available_colors', colors => {
+                    const colorsList = document.getElementById('color2');
+                    let text_color = '';
+                    colorsList.innerHTML = '';
+
+                    for (let color in colors) {
+                        const listItem = document.createElement('option');
+                        listItem.value = colors[color];
+                        
+                        if (colors[color] === 'red') {
+                            text_color = 'Rojo';
+                        } else if (colors[color] === 'blue') {
+                            text_color = 'Azul';
+                        } else if (colors[color] === 'green') {
+                            text_color = 'Verde';
+                        } else if (colors[color] === 'yellow') {
+                            text_color = 'Amarillo';
+                        }
+
+                        listItem.textContent = text_color
+                        colorsList.appendChild(listItem);
+                    }
+                });
+            }else{
+                document.getElementById('container').style.display = 'none';
+                document.getElementById('container2').style.display = 'block';
+                document.getElementById('connect2').disabled = true;
+
+                const num_info = document.getElementById('spaces');
+                const listItem = document.createElement('h1');
+                num_info.innerHTML = '';
+                listItem.textContent = `El juego esta completo, pero puede ingresar como espectador`;
+                num_info.appendChild(listItem);
+            }
+        }else{
+            //mostrar container y ocultar container2
+            document.getElementById('container').style.display = 'block';
         }
     });        
 });
+ 
+// Función que permite iniciar el juego
+document.getElementById('start').addEventListener('click', async () => {
+    socket.emit('start_game');
+});
 
 
-//Función que permite conectarse al servidor de la aplicación
+// Función que permite conectarse al servidor de la aplicación
 document.getElementById('connect').addEventListener('click', async () => {
     const username = document.getElementById('user_name').value;
     const color_piece = document.getElementById('color').value;
@@ -35,11 +82,11 @@ document.getElementById('connect').addEventListener('click', async () => {
     const data = { 
         user_name: username,
         color_piece: color_piece,
-        status: 'ready'
+        status: 'ready',
+        type: 'on_lobby'
     }
     
     socket.emit('create_player', data);
-    //cambiar mensaje del botón connect de Conectar a Conectado e inhabilitar el botón
     change_btns_lobby('connect');
 });
 
@@ -48,9 +95,54 @@ document.getElementById('connect').addEventListener('click', async () => {
 document.getElementById('disconnect').addEventListener('click', async () => {
     const user_name = document.getElementById('user_name').value;
     socket.emit('disconnect_player');
-    //socket.emit('disconnect_player', user_name);
-    //cambiar mensaje del botón connect de Conectado a Conectar e habilitar el botón
     change_btns_lobby('disconnect');
+});
+
+// Conectarse a un juego que está en curso
+document.getElementById('connect2').addEventListener('click', async () => {
+    const username = document.getElementById('user_name2').value;
+    const color_piece = document.getElementById('color2').value;
+
+    if (username === '') {
+        alert('Please enter a username');
+        return;
+    }
+
+    if (color_piece === '') {
+        alert('Please enter a color');
+        return;
+    }
+
+    const data = {
+        user_name: username,
+        color_piece: color_piece,
+        status: 'ready',
+        type: 'on_game'
+    }
+
+    socket.emit('create_player', data);
+});
+
+// Conectarse a un juego que está en curso
+socket.on('start_game_run', num_players => {
+    const num_info = document.getElementById('spaces');
+    const listItem = document.createElement('h1');
+    num_info.innerHTML = '';
+    
+    if (game_ready === false) {
+        if (num_players === 4) {
+            //alert('La sala se llenó. Solo puedes observar el juego en curso');
+
+            document.getElementById('connect2').disabled = true;
+            listItem.textContent = `El juego esta completo, pero puede ingresar como espectador`;
+            const colorsList = document.getElementById('color2');
+            colorsList.innerHTML = '';
+        }else{
+            listItem.textContent = `Espacios disponibles: ${4 - num_players}`;
+        }
+
+        num_info.appendChild(listItem);
+    }
 });
 
 // Evaluar los errores que pueden ocurrir al crear un jugador
@@ -60,6 +152,13 @@ socket.on('error_crte_player', result => {
         change_btns_lobby('disconnect');
     }
 });
+
+// Gestionar los errores que pueden ocurrir al iniciar el juego
+socket.on('error_start_game', error => {
+    alert(error['message']);
+    change_btns_lobby('disconnect');
+});
+
 
 //Mostrar la lista de jugadores conectados
 socket.on('users_list_update', players => {
@@ -79,28 +178,46 @@ socket.on('users_list_update', players => {
     }
 });
 
-// Empezar el juego de manera automatica cuando por lo menos hay 2 jugadores conectados
+// Empezar un juego desde la pantalla de partida en progreso
+socket.on('user_in_game', result => {
+    if (result) {
+        game_ready = true;
+        startCountdown();
+    }
+});
+
+// Empezar el juego desde el lobby
 socket.on('start_game', game_status => {
     if (game_status) {
         change_btns_lobby('connect');
         document.getElementById('disconnect').disabled = true;
         game_ready = true;
-        const countdownElement = document.getElementById('countdown');
-        let time = 5;
-
-        setInterval(() => {
-            countdownElement.textContent = time;
-            if (time === 0) {
-                //Ocultar container y mostrar el tablero con clase ludo-container
-                document.getElementById('container').style.display = 'none';
-                document.getElementById('ludo-container').style.display = 'block';
-                countdownElement.textContent = "¡Tiempo!";
-                return;               
-            }
-            time--;
-        }, 1000);
+        startCountdown();
     }
 });
+
+// Función para un conteo regresivo cada vez que se inicia el juego
+function startCountdown() {
+    const countdownOverlay = document.getElementById('countdown-overlay');
+    const countdownElement = document.getElementById('countdown');
+    let time = 5;
+
+    countdownOverlay.style.display = 'flex';
+
+    const countdownInterval = setInterval(() => {
+        countdownElement.textContent = time;
+        if (time === 0) {
+            clearInterval(countdownInterval);
+            countdownOverlay.style.display = 'none';
+            // Ocultar container y mostrar el tablero con clase ludo-container
+            document.getElementById('ludo-container').style.display = 'block';
+            document.getElementById('container2').style.display = 'none';
+            document.getElementById('container').style.display = 'none';
+            return;
+        }
+        time--;
+    }, 1000);
+}
 
 // Función para cambiar el boton de conectar y desconectar dependiendo de la acción que se realice o los
 // errores que puedan ocurrir
