@@ -20,7 +20,7 @@ clients = {}
 # Crear un nuevo jugador cuando se conecta al lobby
 @sio.event
 def create_player(sid, data):
-    print("hey", sid, data)
+    #print("hey", sid, data)
 
     if len(ludo.get_players()) < 4:
         result = ludo.create_player(data)
@@ -48,8 +48,10 @@ def update_players_list(sid, data):
 def disconnect_player(sid):
     #print('disconnect ', sid)
     player_name = clients.pop(sid, None)
+
     if player_name:
         ludo.remove_player(player_name)
+
     sio.emit("users_list_update", ludo.get_players())
 
 # Verifica el estado del juego (si ya inicio) cuando un jugador se conecta al lobby
@@ -92,7 +94,7 @@ def check_num_players():
 # Obtiene los colores disponibles para seleccionar cuando un jugador se conecta a una partida que ya inicio
 @sio.event
 def get_available_colors(sid):
-    print("get_available_colors", ludo.get_available_colors())
+    #print("get_available_colors", ludo.get_available_colors())
     sio.emit("available_colors", ludo.get_available_colors(), to=sid)
 
 # Función que se ejecuta en segundo plano y verifica si hay minimo 2 jugadores conectados para iniciar la partida.
@@ -113,7 +115,18 @@ def check_connected_players():
         else:
             break
 
-      
+# Función que se ejecuta en segundo plano y verifica si el juego ya empezo, para que 
+# las personas que se conecten al lobby sean redirigidas a la sala de espera, donde pueden 
+# ingresar a la partida que ya inicio. siempre y cuando haya espacio disponible.
+def lobby_to_waiting_room():
+    while True:
+        if ludo.get_game() == True:
+            
+            sio.emit("active_wating_room", ludo.get_game())
+            break
+        else:
+            #print("Verficando estado.")
+            sio.sleep(1)  
 
 '''@sio.event
 def create_game_room(sid, data):
@@ -127,6 +140,7 @@ if __name__ == '__main__':
     #avaliable_pieces = sio.start_background_task(check_available_pieces)
     #thread = threading.Thread(target=check_connected_players)
     #thread.start()
-
+    lobby_to_wr = sio.start_background_task(lobby_to_waiting_room)
     eventlet.wsgi.server(eventlet.listen(('', PORT)), app)
+    
     print(f"Server running on {HOST}:{PORT}")

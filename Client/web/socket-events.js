@@ -1,62 +1,13 @@
 const socket = window.ludoSocket
+let username = '';
+let color_piece = '';
 let game_ready = false;
-
 
 // Al cargar la página, se debe verificar si el juego ya empezó
 document.addEventListener('DOMContentLoaded', async () => {
-    socket.emit('check_game_status');
-
-    socket.on('game_started', game_status => {
-        //game_ready = game_status;
-        if (game_status['run'] === true) {
-            if (game_status['all_players'] === false) {
-                
-                //ocultar container y mostrar container2
-                document.getElementById('container').style.display = 'none';
-                document.getElementById('container2').style.display = 'block';
-
-                //consultar colores de las fichas disponibles
-                socket.emit('get_available_colors');
-                socket.on('available_colors', colors => {
-                    const colorsList = document.getElementById('color2');
-                    let text_color = '';
-                    colorsList.innerHTML = '';
-
-                    for (let color in colors) {
-                        const listItem = document.createElement('option');
-                        listItem.value = colors[color];
-                        
-                        if (colors[color] === 'red') {
-                            text_color = 'Rojo';
-                        } else if (colors[color] === 'blue') {
-                            text_color = 'Azul';
-                        } else if (colors[color] === 'green') {
-                            text_color = 'Verde';
-                        } else if (colors[color] === 'yellow') {
-                            text_color = 'Amarillo';
-                        }
-
-                        listItem.textContent = text_color
-                        colorsList.appendChild(listItem);
-                    }
-                });
-            }else{
-                document.getElementById('container').style.display = 'none';
-                document.getElementById('container2').style.display = 'block';
-                document.getElementById('connect2').disabled = true;
-
-                const num_info = document.getElementById('spaces');
-                const listItem = document.createElement('h1');
-                num_info.innerHTML = '';
-                listItem.textContent = `El juego esta completo, pero puede ingresar como espectador`;
-                num_info.appendChild(listItem);
-            }
-        }else{
-            //mostrar container y ocultar container2
-            document.getElementById('container').style.display = 'block';
-        }
-    });        
+    activate_room();       
 });
+
  
 // Función que permite iniciar el juego
 document.getElementById('start').addEventListener('click', async () => {
@@ -66,16 +17,16 @@ document.getElementById('start').addEventListener('click', async () => {
 
 // Función que permite conectarse al servidor de la aplicación
 document.getElementById('connect').addEventListener('click', async () => {
-    const username = document.getElementById('user_name').value;
-    const color_piece = document.getElementById('color').value;
+    username = document.getElementById('user_name').value;
+    color_piece = document.getElementById('color').value;
     
     if (username === '') {
-        alert('Please enter a username');
+        alert('Ingresa un nombre de usuario');
         return;
     }
 
     if (color_piece === '') {
-        alert('Please enter a color');  
+        alert('Selecciona un color de ficha');  
         return;
     }
     
@@ -93,7 +44,9 @@ document.getElementById('connect').addEventListener('click', async () => {
 
 //Función que permite desconectarse del servidor del juego
 document.getElementById('disconnect').addEventListener('click', async () => {
-    const user_name = document.getElementById('user_name').value;
+    username = '';
+    color_piece = '';
+    document.getElementById('start').style.display = 'none';
     socket.emit('disconnect_player');
     change_btns_lobby('disconnect');
 });
@@ -104,12 +57,12 @@ document.getElementById('connect2').addEventListener('click', async () => {
     const color_piece = document.getElementById('color2').value;
 
     if (username === '') {
-        alert('Please enter a username');
+        alert('Ingresa un nombre de usuario');
         return;
     }
 
     if (color_piece === '') {
-        alert('Please enter a color');
+        alert('Selecciona un color');
         return;
     }
 
@@ -123,7 +76,8 @@ document.getElementById('connect2').addEventListener('click', async () => {
     socket.emit('create_player', data);
 });
 
-// Conectarse a un juego que está en curso
+// Mostrar la información de espacios disponibles en la sala de espera cuando
+// la partida ya está en curso
 socket.on('start_game_run', num_players => {
     const num_info = document.getElementById('spaces');
     const listItem = document.createElement('h1');
@@ -159,6 +113,15 @@ socket.on('error_start_game', error => {
     change_btns_lobby('disconnect');
 });
 
+// Cerrar el lobby cuando una persona no ingresa nombre de usuario  y color y
+// selecciona el botón de conectar. En este caso se carga la pantalla de juego
+// en progreso y puede ingresar siempre y cuando haya espacio disponible
+socket.on('active_wating_room', error => {
+    if (username === '' && color_piece === '') {
+        activate_room();
+    }
+});
+
 
 //Mostrar la lista de jugadores conectados
 socket.on('users_list_update', players => {
@@ -167,13 +130,17 @@ socket.on('users_list_update', players => {
 
     if (Object.keys(players).length === 0) {
         const listItem = document.createElement('li');
-        listItem.textContent = 'No players connected';
+        listItem.textContent = 'No hay jugadores conectados';
         playersList.appendChild(listItem);
     }else{
         for (let player in players) {
             const listItem = document.createElement('li');
             listItem.textContent = `name: ${players[player].name}, color_piece: ${players[player].color_piece}, Status: ${players[player].status}`;
             playersList.appendChild(listItem);
+
+            if (players[player].primero && players[player].name === username) {
+                document.getElementById('start').style.display = 'block';
+            }
         }
     }
 });
@@ -233,6 +200,64 @@ function change_btns_lobby(action){
         document.getElementById('user_name').disabled = false;
         document.getElementById('color').disabled = false;
     }
+}
+
+// Función que activa el lobby o la sala de espera. Cuando el lobby se carga, se 
+// verifica si el juego ya está en curso y se muestra la pantalla de juego en progreso
+// o se muestra el lobby para que los jugadores se conecten
+function activate_room() {
+    socket.emit('check_game_status');
+
+    socket.on('game_started', game_status => {
+        //game_ready = game_status;
+        if (game_status['run'] === true) {
+            if (game_status['all_players'] === false) {
+                
+                //ocultar container y mostrar container2
+                document.getElementById('container').style.display = 'none';
+                document.getElementById('container2').style.display = 'block';
+
+                //consultar colores de las fichas disponibles
+                socket.emit('get_available_colors');
+                socket.on('available_colors', colors => {
+                    const colorsList = document.getElementById('color2');
+                    let text_color = '';
+                    colorsList.innerHTML = '';
+
+                    for (let color in colors) {
+                        const listItem = document.createElement('option');
+                        listItem.value = colors[color];
+                        
+                        if (colors[color] === 'red') {
+                            text_color = 'Rojo';
+                        } else if (colors[color] === 'blue') {
+                            text_color = 'Azul';
+                        } else if (colors[color] === 'green') {
+                            text_color = 'Verde';
+                        } else if (colors[color] === 'yellow') {
+                            text_color = 'Amarillo';
+                        }
+
+                        listItem.textContent = text_color
+                        colorsList.appendChild(listItem);
+                    }
+                });
+            }else{
+                document.getElementById('container').style.display = 'none';
+                document.getElementById('container2').style.display = 'block';
+                document.getElementById('connect2').disabled = true;
+
+                const num_info = document.getElementById('spaces');
+                const listItem = document.createElement('h1');
+                num_info.innerHTML = '';
+                listItem.textContent = `El juego esta completo, pero puede ingresar como espectador`;
+                num_info.appendChild(listItem);
+            }
+        }else{
+            //mostrar container y ocultar container2
+            document.getElementById('container').style.display = 'block';
+        }
+    });
 }
 
 
