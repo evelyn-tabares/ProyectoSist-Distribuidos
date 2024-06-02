@@ -6,6 +6,32 @@ class App:
         self.__players = {}
         self.__game = False
         self.__avaliable_pieces = ['red', 'blue', 'green', 'yellow']
+        self.time_offsets = {}
+
+    
+    
+    # Guardar el offset de tiempo de todos los jugadores conectados para 
+    # calcular la corrección de tiempo con el promedio de todos los offsets 
+    def update_time_offset(self, sid, offset):
+        self.time_offsets[sid] = offset
+    
+    # Verificar si todos los jugadores conectados han respondido con su offset de tiempo
+    def all_clients_responded(self):
+        return len(self.time_offsets) == len(self.__players)
+    
+    # Calcular el promedio de todos los offsets de tiempo de los jugadores conectados
+    def calculate_average_offset(self):
+        total_offset = sum(self.time_offsets.values())
+        return total_offset / len(self.time_offsets)
+    
+    # Reiniciar la lista de offsets de tiempo
+    def reset_time_offset(self):
+        self.time_offsets = {}
+
+
+
+
+
 
     # Crear un nuevo jugador
     def create_player(self, data):

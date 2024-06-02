@@ -2,6 +2,7 @@ const socket = window.ludoSocket
 let username = '';
 let color_piece = '';
 let game_ready = false;
+let time_game = 0;
 
 // Al cargar la página, se debe verificar si el juego ya empezó
 document.addEventListener('DOMContentLoaded', async () => {
@@ -50,6 +51,92 @@ document.getElementById('disconnect').addEventListener('click', async () => {
     socket.emit('disconnect_player');
     change_btns_lobby('disconnect');
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Permite enviar la hora actual del cliente al servidor, para que pueda calcular
+// el ajuste que debe realizar en el tiempo del cliente
+socket.on('request_time', data => {
+    const serverTime = data.server_time;
+    const clientTime = Date.now() / 1000; // Convertir a segundos
+    socket.emit('provide_time_offset', {
+        server_time: serverTime,
+        client_time: clientTime
+    });
+});
+
+// Recibe el ajuste que debe realizar el cliente en su tiempo
+socket.on('adjust_time', data => {
+    const offset = data.offset;
+    adjustClientTime(offset);
+});
+
+// Ajusta el tiempo del cliente. El ajuste que envía el servidor esta en UTC 00:00
+// por lo que se debe ajustar a la zona horaria del cliente.
+function adjustClientTime(offset) {
+    // Obtener la hora actual del cliente en segundos
+    const adjusted_time = (Date.now() / 1000) + offset;
+    const adjusted_date = new Date(adjusted_time * 1000);
+
+    // Obtener el desplazamiento de la zona horaria del usuario en minutos
+    // Ajusta la hora usando el desplazamiento de la zona horaria del usuario
+    const timezone_offset_in_minutes = adjusted_date.getTimezoneOffset();
+    const local_adjusted_date = new Date(adjusted_date.getTime() - (timezone_offset_in_minutes * 60 * 1000));
+
+    // Formatear la hora en formato HH:MM:SS
+    const hours = local_adjusted_date.getUTCHours().toString().padStart(2, '0');
+    const minutes = local_adjusted_date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = local_adjusted_date.getUTCSeconds().toString().padStart(2, '0');
+    
+    const formatted_time = `${hours}:${minutes}:${seconds}`;
+    time_game = formatted_time;
+    //console.log(`Adjusted Time: ${formatted_time}`);
+}
+
+//Solicitar la sincronización de los relojes de los clientes que se conectan al juego
+socket.on('synchronize_clocks', () => {
+    socket.emit('synchronize_clocks');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Conectarse a un juego que está en curso
 /*document.getElementById('connect2').addEventListener('click', async () => {
@@ -103,14 +190,17 @@ socket.on('start_game_run', num_players => {
 socket.on('error_crte_player', result => {
     if (result['success'] === false) {
         alert(result['message']);
+        username = '';
+        color_piece = '';
         change_btns_lobby('disconnect');
     }
 });
 
 // Gestionar los errores que pueden ocurrir al iniciar el juego
 socket.on('error_start_game', error => {
-    alert(error['message']);
-    change_btns_lobby('disconnect');
+    if (error['success'] === false) {
+        alert(error['message']);
+    }
 });
 
 // Cerrar el lobby cuando una persona no ingresa nombre de usuario  y color y
@@ -167,9 +257,8 @@ socket.on('start_game', game_status => {
 function startCountdown() {
     const countdownOverlay = document.getElementById('countdown-overlay');
     const countdownElement = document.getElementById('countdown');
-    let time = 5;
-
     countdownOverlay.style.display = 'flex';
+    let time = 5;
 
     const countdownInterval = setInterval(() => {
         countdownElement.textContent = time;
@@ -180,10 +269,22 @@ function startCountdown() {
             document.getElementById('ludo-container').style.display = 'block';
             document.getElementById('container2').style.display = 'none';
             document.getElementById('container').style.display = 'none';
+            document.getElementById('time').style.display = 'none';
+            updateGameTime();
+
             return;
         }
         time--;
     }, 1000);
+}
+
+function updateGameTime() {
+    const countdownElement = document.getElementById('time');
+    countdownElement.style.display = 'block';
+    const listItem = document.createElement('h1');
+    listItem.textContent = `Tiempo de juego: ${time_game}`;
+    countdownElement.innerHTML = '';
+    countdownElement.appendChild(listItem);
 }
 
 // Función para cambiar el boton de conectar y desconectar dependiendo de la acción que se realice o los
