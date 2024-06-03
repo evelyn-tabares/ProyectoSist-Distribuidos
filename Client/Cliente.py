@@ -3,6 +3,9 @@ import eel
 import json
 import os
 from dotenv import dotenv_values
+import socketio
+
+global_color_piece = None
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(parent_dir, '..', '.env')
@@ -20,6 +23,9 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #Función para enviar los datos del nuevo usuario al servidor
 @eel.expose
 def new_user(user_name, color_piece):
+    global global_color_piece
+    global_color_piece = color_piece
+     
     #Conectar al servidor
     try:
             #Enviar datos al servidor en formato JSON
@@ -51,6 +57,52 @@ def update_users():
         return resultado
     except Exception as e:
         print("Error:", e) 
+
+
+
+@eel.expose
+def on_dice_click():
+    try:
+        # # Crear datos para enviar al servidor
+        # data = {'action': 'dice_click', 'color_piece': global_color_piece}
+        # s.sendall(json.dumps(data).encode('utf-8'))
+
+        # Recibir datos del servidor
+        response = s.recv(1024).decode('utf-8')
+        response = json.loads(response)  # Convertir de JSON a diccionario
+
+        dice_values = response["dice_values"]
+        eligible_pieces = response["eligible_pieces"]
+        player = response["player"]
+        state = response["state"]
+        print("Dice values:", dice_values)
+        print("Eligible pieces:", eligible_pieces)
+        print("Player:", player)
+        print("State:", state)
+        # Aquí puedes agregar el código para manejar las piezas elegibles y los valores de los dados
+    except Exception as e:
+        print("Error:", e)
+
+@eel.expose
+def piece_clicked(player, piece):
+    try:
+        # Recibir datos del servidor
+        response = s.recv(1024).decode('utf-8')
+        response = json.loads(response)  # Convertir de JSON a diccionario
+        player = response["player"]
+        piece = response["piece"]
+        current_positions = response["current_position"]
+        state = response["state"]
+        isunhiglighted_pieces = response["isunhiglighted_pieces"]
+
+        print("piece:", piece)
+        print("current_positions:", current_positions)
+        print("isunhiglighted_pieces:", isunhiglighted_pieces)
+        print("Player:", player)
+        print("State:", state)
+        # Aquí puedes agregar el código para manejar las piezas elegibles y los valores de los dados
+    except Exception as e:
+        print("Error:", e)
 
 # Ejecutar la aplicación
 def start():

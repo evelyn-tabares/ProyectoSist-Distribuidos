@@ -53,6 +53,15 @@ export class UI {
         pieceElement.style.left = x * STEP_LENGTH + '%';
     }
 
+
+    static setTurn(value) {
+        const player = PLAYERS[value];
+        const turnElement = document.getElementById('turn'); // Asume que hay un elemento con id 'turn'
+        turnElement.innerText = `Es el turno del jugador ${player}. Por favor, tira los dados.`;
+        UI.setDiceValue(diceValue, player);
+        UI.setDiceValue2(diceValue2, player);
+    }
+
     static setTurn(index) {
         if(index < 0 || index >= PLAYERS.length) {
             console.error('index out of bound!');
@@ -62,7 +71,9 @@ export class UI {
         const player = PLAYERS[index];
 
         // Display player ID
-        document.querySelector('.active-player span').innerText = player;
+       // document.querySelector('.active-player span').innerText = player;
+        document.querySelector('.active-player span').innerText = `Es el turno del jugador ${player}. Por favor, tira los dados.`;
+
 
         const activePlayerBase = document.querySelector('.player-base.highlight');
         if(activePlayerBase) {
@@ -99,7 +110,14 @@ export class UI {
     }
 
     static setDiceValue(value) {
-        document.querySelector('.dice-value').innerText = value;
+        const diceElement = document.querySelector('.dice-value');
+        diceElement.innerText = `${value}`;
+    }
+
+    static setDiceValue2(value) {
+        const diceElement = document.querySelector('.dice-value2');
+        diceElement.innerText = `${value}`;
+
     }
 }
 

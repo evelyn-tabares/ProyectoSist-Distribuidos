@@ -11,12 +11,15 @@
 </head>
 <script type="text/javascript" src="/eel.js"></script>
 <script type="text/javascript" src="UI.js"></script>
+<script type="text/javascript" src="/Client/web/UI.js"></script>
+
 
 <body>
     <button id="dagewoi">click</button>
     <script type="module">
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-        const socket = await io("http://localhost:8002");
+        const socket = await io("http://192.168.0.16:8002");
+        // const socket = io('http://' + BACKEND_SOCKET_HOST + ':' + BACKEND_SOCKET_PORT);
         window.ludoSocket = socket;
     </script>
     <table id="roomsTable" style="display: none;">
@@ -49,10 +52,10 @@
             <div class="left-side">
                 <input type="text" id="name" placeholder="Nombre de usuario">
                 <select id="color">
-                    <option value="red">Rojo</option>
-                    <option value="blue">Azul</option>
-                    <option value="green">Verde</option>
-                    <option value="yellow">Amarillo</option>
+                    <option value="P4">Rojo</option>
+                    <option value="P1">Azul</option>
+                    <option value="P3">Verde</option>
+                    <option value="P2">Amarillo</option>
                 </select>
             </div>
             <div class="right-side">
@@ -67,6 +70,9 @@
             <button id="connect">Conectar</button>
             <button id="disconnect">Desconectar</button>
         </div>
+        <div class="container">
+            <button id ="iniciar">Iniciar Partida </button>
+        </div>
 
 
 
@@ -84,7 +90,8 @@
 
 
 
-    <div class="ludo-container" style="display: none;">
+        <!-- style="display: none;" -->
+    <div class="ludo-container" >
         <div class="ludo">
             <div class="player-pieces">
                 <div class="player-piece" player-id="P1" piece="0"></div>
@@ -119,9 +126,9 @@
             <div class="row">
                 <button id="dice-btn" class="btn btn-dice">Roll</button>
                 <div class="dice-value"></div>
-                <button id="reset-btn" class="btn btn-reset">Reset</button>
+                <div class="dice-value2"></div>
             </div>
-            <h2 class="active-player">Active Player: <span></span> </h2>
+            <h2 class="active-player"><span></span> </h2>
         </div>
     </div>
     <script src="./main.js" type="module"></script>
@@ -130,7 +137,7 @@
              El primer código que se ejecuta luego del html es UI.js
             Que se encarga del manejo de los clicks, botones y todo lo mostrado en el html
         -->
-    <form id="createRoomForm" style="display: none;">
+    <!-- <form id="createRoomForm" style="display: none;">
         <label for="name">Name:</label><br>
         <input type="text" id="name" name="name"><br><br>
 
@@ -143,7 +150,7 @@
         <input id="createRoomFormButton" type="button" value="Submit">
 
         <h1 id="response"></h1>
-    </form>
+    </form> -->
     <script src="./socket-events.js" type="module"></script> 
     <!--fin del ejemplo de uso de la libreria eel-->
 </body>

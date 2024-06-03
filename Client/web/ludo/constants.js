@@ -114,7 +114,7 @@ export const COORDINATES_MAP = {
     702: [10.5, 12.43],
     703: [12.54, 12.43],
 };
-
+export const OUT_OF_GAME = -1;
 export const STEP_LENGTH = 6.66;
 
 export const PLAYERS = ['P1', 'P2', 'P3', 'P4'];
@@ -160,3 +160,5 @@ export const STATE = {
     DICE_NOT_ROLLED: 'DICE_NOT_ROLLED',
     DICE_ROLLED: 'DICE_ROLLED',
 }
+
+export const JAIL_POSITIONS = {...HOME_ENTRANCE};

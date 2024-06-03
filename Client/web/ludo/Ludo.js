@@ -1,5 +1,6 @@
 import { BASE_POSITIONS, HOME_ENTRANCE, HOME_POSITIONS, PLAYERS, SAFE_POSITIONS, START_POSITIONS, STATE, TURNING_POINTS } from './constants.js';
 import { UI } from './UI.js';
+import { OUT_OF_GAME } from './constants.js';
 
 export class Ludo {
     currentPositions = {
@@ -9,7 +10,14 @@ export class Ludo {
         P4: [],
     }
 
-   
+    firstExit = {
+        P1: false,
+        P2: false,
+        P3: false,
+        P4: false,
+    }
+
+
 
     _diceValue;
     get diceValue() {
@@ -21,14 +29,37 @@ export class Ludo {
         UI.setDiceValue(value);
     }
 
-    _turn;
-    get turn() {
-        return this._turn;
+    _diceValue2;
+    get diceValue2() {
+        return this._diceValue2;
     }
-    set turn(value) {
-        this._turn = value;
-        UI.setTurn(value);
+    set diceValue2(value) {
+        this._diceValue2 = value;
+
+        UI.setDiceValue2(value); 
     }
+
+    _pairCount = 0;
+    get pairCount() {
+        return this._pairCount;
+    }
+    set pairCount(value) {
+        this._pairCount = value;
+        if (value === 3) {
+            this.removePieceFromGame(PLAYERS[this.turn], 0);
+            this._pairCount = 0;  // Reset pair count
+            // Permitir al jugador sacar una ficha del juego
+        }
+    }
+
+    // _turn;
+    // get turn() {
+    //     return this._turn;
+    // }
+    // // set turn(value) {
+    // //     this._turn = value;
+    // //     UI.setTurn(value);
+    // // }
 
     _state;
     get state() {
@@ -37,53 +68,42 @@ export class Ludo {
     set state(value) {
         this._state = value;
 
-        if(value === STATE.DICE_NOT_ROLLED) {
-            UI.enableDice();
-            UI.unhighlightPieces();
-        } else {
-            UI.disableDice();
-        }
+        // if(value === STATE.DICE_NOT_ROLLED) {
+        //     UI.enableDice();
+        //     UI.unhighlightPieces();
+        // } else {
+        //     UI.disableDice();
+        // }
     }
+
+    extraTurn = false;
 
     constructor() {
         console.log('Hello World! Lets play Ludo!');
-        // this.listenSumaClick();
+        this.baseExitAttempts = 0;
+        // this.determineFirstTurn();
 
-     
         this.listenDiceClick();
-        this.listenResetClick();
-        this.listenPieceClick();
+        // this.listenResetClick();
+        // this.listenPieceClick();
 
         this.resetGame();
         
         
     }
 
-    /**
-     * para escuchar el click en el boton de suma
-     * y ejecutar la función onSumaClick
-     * 
-     */
-    listenSumaClick() {
-        UI.listenSumaClick(this.onSumaClick.bind(this))
+    removePieceFromGame(player, piece) {
+        this.setPiecePosition(player, piece, OUT_OF_GAME);
     }
 
-    /*
-     * Función que se ejecuta cuando se hace click en el botón de suma
-     * El siguiente paso es obtener los valores de los inputs num1 y num2
-     * y se llama a la función sumar_y_mostrar de eel, que recibe los dos
-     * números y devuelve la suma de los mismos.
-     * Por último, se actualiza el texto del elemento html con id='resultado' con
-     * el resultado de la suma.
-    */
-    onSumaClick() {
-        var num1 = document.getElementById("num1").value;
-        var num2 = document.getElementById("num2").value;
-        eel.sumar_y_mostrar(num1, num2)(function(resultado) {
-            document.getElementById("resultado").innerText = "El resultado es: " + resultado;
-        });
-        
-    }
+    // determineFirstTurn() {
+    //     const firstTurnResults = {};
+    //     for (let player of PLAYERS) {
+    //         firstTurnResults[player] = 1 + Math.floor(Math.random() * 6);
+    //     }
+    //     const firstPlayer = Object.keys(firstTurnResults).reduce((a, b) => firstTurnResults[a] > firstTurnResults[b] ? a : b);
+    //     this.turn = PLAYERS.indexOf(firstPlayer);
+    // }
   
     listenDiceClick() {
         UI.listenDiceClick(this.onDiceClick.bind(this))
@@ -91,10 +111,26 @@ export class Ludo {
 
     onDiceClick() {
         console.log('dice clicked!');
-        this.diceValue = 1 + Math.floor(Math.random() * 6);
-        this.state = STATE.DICE_ROLLED;
+        document.querySelector('.active-player span').innerText = '';
+        // this.diceValue = 1 + Math.floor(Math.random() * 6);
+        // this.diceValue2 = 1 + Math.floor(Math.random() * 6); 
+        // this.state = STATE.DICE_ROLLED;
         
-        this.checkForEligiblePieces();
+        
+        // this.checkForEligiblePieces();
+
+        // if (this.diceValue === this.diceValue2) {
+        //     this.pairCount++;
+        //     this.baseExitAttempts++;
+        //     this.extraTurn = true; 
+        //     if (this.baseExitAttempts === 3) {
+        //         this.baseExitAttempts = 0;
+        //         this.incrementTurn();
+        //     }
+        // }
+        // else {
+        //     this.pairCount = 0;
+        // }
     }
 
     checkForEligiblePieces() {
@@ -115,6 +151,9 @@ export class Ludo {
     }
 
     getEligiblePieces(player) {
+        const hasPieceOutsideHome = this.currentPositions[player].some(
+            position => !BASE_POSITIONS[player].includes(position)
+        );
         return [0, 1, 2, 3].filter(piece => {
             const currentPosition = this.currentPositions[player][piece];
 
@@ -122,11 +161,19 @@ export class Ludo {
                 return false;
             }
 
+            // if(
+            //     BASE_POSITIONS[player].includes(currentPosition)
+            //     && this.diceValue !== 6
+            // ){
+            //     return false;
+            // }
+            
             if(
                 BASE_POSITIONS[player].includes(currentPosition)
-                && this.diceValue !== 6
+                && this.diceValue !== this.diceValue2
             ){
                 return false;
+                // return this.firstExit[player] || hasPieceOutsideHome;
             }
 
             if(
@@ -172,26 +219,51 @@ export class Ludo {
 
         const player = target.getAttribute('player-id');
         const piece = target.getAttribute('piece');
-        this.handlePieceClick(player, piece);
+        // this.handlePieceClick(player, piece);
+
+        // if (player !== PLAYERS[this.turn]) {
+        //     return;
+        // }
+        socket.emit('piece_clicked', { player: player, piece: piece });
+
     }
 
     handlePieceClick(player, piece) {
         console.log(player, piece);
         const currentPosition = this.currentPositions[player][piece];
-        
-        if(BASE_POSITIONS[player].includes(currentPosition)) {
+
+        if(BASE_POSITIONS[player].includes(currentPosition) && this.firstExit[player] == true) {
             this.setPiecePosition(player, piece, START_POSITIONS[player]);
             this.state = STATE.DICE_NOT_ROLLED;
             return;
         }
+        
+        if(BASE_POSITIONS[player].includes(currentPosition)) {
+            // Move all pieces to the start position
+            [0, 1, 2, 3].forEach(piece => {
+                this.setPiecePosition(player, piece, START_POSITIONS[player]);
+            });
+            this.state = STATE.DICE_NOT_ROLLED;
+            return;
+        }
+
 
         UI.unhighlightPieces();
-        this.movePiece(player, piece, this.diceValue);
+        this.movePiece(player, piece, this.diceValue + this.diceValue2);
+          // Si el jugador tiene un turno extra, permitirle tirar los dados de nuevo
+        if (this.extraTurn) {
+            this.state = STATE.DICE_NOT_ROLLED;
+            this.extraTurn = false;
+        }
     }
 
     setPiecePosition(player, piece, newPosition) {
         this.currentPositions[player][piece] = newPosition;
         UI.setPiecePosition(player, piece, newPosition)
+
+        if (newPosition === START_POSITIONS[player]) {
+            this.firstExit[player] = true;
+        }
     }
 
     movePiece(player, piece, moveBy) {
