@@ -17,7 +17,9 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(parent_dir, '..', '.env')
 env_vars = dotenv_values(env_path)
 # HOST = env_vars.get("SERVER_SOCKET_HOST")
-HOST = '192.168.0.16'
+
+HOST = env_vars.get("SERVER_SOCKET_HOST")
+#HOST = '192.168.0.16'
 # PORT = int(env_vars.get("SERVER_SOCKET_PORT"))
 PORT = 8002
 sio = socketio.Server(cors_allowed_origins="*")

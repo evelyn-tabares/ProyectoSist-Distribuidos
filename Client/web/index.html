@@ -18,7 +18,8 @@
     <button id="dagewoi">click</button>
     <script type="module">
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-        const socket = await io("http://192.168.0.16:8002");
+        //const socket = await io("http://192.168.0.16:8002");
+        const socket = await io("http://localhost:8002");
         // const socket = io('http://' + BACKEND_SOCKET_HOST + ':' + BACKEND_SOCKET_PORT);
         window.ludoSocket = socket;
     </script>
