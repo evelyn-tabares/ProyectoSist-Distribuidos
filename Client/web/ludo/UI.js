@@ -46,13 +46,18 @@ export class UI {
             return;
         }
 
+        // Verificar si COORDINATES_MAP está definido y contiene newPosition
+        if(!COORDINATES_MAP || !COORDINATES_MAP[newPosition]) {
+            console.error(`COORDINATES_MAP or newPosition: ${newPosition} not found`)
+            return;
+        }
+
         const [x, y] = COORDINATES_MAP[newPosition];
 
         const pieceElement = playerPiecesElements[player][piece];
         pieceElement.style.top = y * STEP_LENGTH + '%';
         pieceElement.style.left = x * STEP_LENGTH + '%';
     }
-
 
     static setTurn(value) {
         const player = PLAYERS[value];

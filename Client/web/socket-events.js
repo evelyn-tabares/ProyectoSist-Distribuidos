@@ -131,12 +131,12 @@ socket.on('dice_clicked', data => {
    
     highlightActivePlayerBase(player);
 
-    if (eligible_pieces.length > 0) {
-        // UI.highlightPieces(player, eligible_pieces);
-    }
-    else{
-        UI.unhighlightPieces();
-    }
+    // if (eligible_pieces.length > 0) {
+    //     // UI.highlightPieces(player, eligible_pieces);
+    // }
+    // else{
+    //     UI.unhighlightPieces();
+    // }
     // if (userAfter === local_player_id) {
     //     UI.enableDice();
     //     document.querySelector('.active-player span').innerText =
@@ -148,6 +148,13 @@ socket.on('dice_clicked', data => {
     //     UI.disableDice();
     //     return;
     // }
+    if(user_name === usernameSet)
+    {
+        UI.enableDice();
+    }
+    else{
+        UI.disableDice();
+    }
     
     if (local_player_id != player )//Si el jugador que lanza los dados no es el jugador local
     {
