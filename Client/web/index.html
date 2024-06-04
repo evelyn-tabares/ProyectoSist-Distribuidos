@@ -8,6 +8,33 @@
     <link rel="stylesheet" href="./ludo/style.css">
     <link rel="stylesheet" href="styles.css">
 
+    <style>
+        /* Estilos para el fondo transparente de la cuenta regresiva */
+        #countdown-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 24px;
+        }
+
+        #countdown {
+            font-size: 50px;
+        }
+
+        #countdown2 {
+            font-size: 30px;
+            color: lightgray;
+        }
+    </style>    
+
 </head>
 <script type="text/javascript" src="/eel.js"></script>
 <script type="text/javascript" src="UI.js"></script>
@@ -15,7 +42,6 @@
 
 
 <body>
-    <button id="dagewoi">click</button>
     <script type="module">
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
         //const socket = await io("http://192.168.0.16:8002");
@@ -23,76 +49,59 @@
         // const socket = io('http://' + BACKEND_SOCKET_HOST + ':' + BACKEND_SOCKET_PORT);
         window.ludoSocket = socket;
     </script>
-    <table id="roomsTable" style="display: none;">
-        <tr>
-            <th>Room Name</th>
-            <th>Password</th>
-            <th>Number of Players</th>
-        </tr>
-    </table>
 
+    <div id="countdown-overlay" style="display: none;">
+        <div id="countdown">Iniciando...</div>
+        <div id="countdown2"></div>
+    </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-<!--Sección de prueba para validar el funcionamiento adecuado de la 
-        logica del servidor -->
-        <div class="container">
-            <div class="left-side">
-                <input type="text" id="name" placeholder="Nombre de usuario">
-                <select id="color">
-                    <option value="P4">Rojo</option>
-                    <option value="P1">Azul</option>
-                    <option value="P3">Verde</option>
-                    <option value="P2">Amarillo</option>
-                </select>
-            </div>
-            <div class="right-side">
-                <h2>Jugadores conectados: </h2>
-                <ul id="player-list">
-                    <p id="player1">jugador 1</p>
-                </ul>
-            </div>
+    <!-- Formulario de registro cuando el juego no ha empezado -->
+    <div class="container" id="container" style="display: none;">
+        <div class="left-side">
+            <input type="text" id="user_name" placeholder="Nombre de usuario">
+            <select id="color">
+                <option value="P4">Rojo</option>
+                <option value="P1">Azul</option>
+                <option value="P3">Verde</option>
+                <option value="P2">Amarillo</option>
+            </select>
         </div>
-    
+        <div class="right-side">
+            <h2>Jugadores conectados: </h2>
+            <ul id="player-list">
+                <!--Se llena de manera automatica consultando al servidor-->
+            </ul>
+        </div>
         <div class="container">
             <button id="connect">Conectar</button>
             <button id="disconnect">Desconectar</button>
+            <button id="start" style="display: none;">Iniciar Partida</button>
         </div>
-        <div class="container">
-            <button id ="iniciar">Iniciar Partida </button>
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </div> 
+    
+        <!--Formulario de registro cuando el juego ya empezó-->
+    <div class="container" id="container2" style="display: none;">
+            <h1>juego en progreso</h1>
+            <div class="left-side">
+                <input type="text" id="user_name2" placeholder="Nombre de usuario">
+                <select id="color2">
+                    <!-- Se llena de manera automatica consultando al servidor por las fichas disponibles -->
+                </select>
+            </div>
+            <div class="right-side" id="spaces">
+                <h2>Espacios disponibles: </h2>
+            </div>
+            <div class="container">
+                <!--<button id="connect2">Unirse</button>
+                <button id="disconnect2">Espectador</button>-->
+            </div>
+    </div>
 
 
 
 
         <!-- style="display: none;" -->
-    <div class="ludo-container" >
+    <div class="ludo-container" id="ludo-container" style="display: none;">
         <div class="ludo">
             <div class="player-pieces">
                 <div class="player-piece" player-id="P1" piece="0"></div>
