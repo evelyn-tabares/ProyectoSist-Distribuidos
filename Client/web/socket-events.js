@@ -33,18 +33,6 @@ document.getElementById('start').addEventListener('click', async () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //Función que permite conectarse al servidor de la aplicación
 /*document.getElementById('connect').addEventListener('click', async () => {
     usernameSet = document.getElementById('name').value;
@@ -61,7 +49,7 @@ document.getElementById('start').addEventListener('click', async () => {
 document.getElementById('connect').addEventListener('click', async () => {
     usernameSet = document.getElementById('user_name').value;
     color_piece_player = document.getElementById('color').value;
-    
+    document.getElementById('player-message').innerHTML = 'Jugador: ' + usernameSet + '<br/>Color: ' + color_piece_player;    
     if (usernameSet === '') {
         alert('Ingresa un nombre de usuario');
         return;
@@ -71,7 +59,16 @@ document.getElementById('connect').addEventListener('click', async () => {
         alert('Selecciona un color de ficha');  
         return;
     }
-    
+    if (usernameSet.length > 15) {
+        alert('El nombre de usuario no puede tener más de 15 caracteres.');
+        return;
+    }
+
+    if (!/^[a-z]+$/.test(usernameSet)) {
+        alert('El nombre de usuario solo puede contener letras minúsculas.');
+        return;
+    }
+
     const data = { 
         user_name: usernameSet,
         color_piece: color_piece_player,
@@ -197,9 +194,6 @@ socket.on('active_wating_room', error => {
 });
 
 
-
-
-
 //Mostrar la lista de jugadores conectados
 /*socket.on('users_list_update', players => {
     const playersList = document.getElementById('player-list');
@@ -284,6 +278,7 @@ function startCountdown() {
             document.getElementById('ludo-container').style.display = 'block';
             document.getElementById('container2').style.display = 'none';
             document.getElementById('container').style.display = 'none';
+            document.getElementById('player-message').style.display = 'block';
             //document.getElementById('time').style.display = 'none';
 
             return;
@@ -427,6 +422,10 @@ socket.on('dice_clicked', data => {
     console.log('data es ', data);
     console.log('dice clicked jugador', player); 
     console.log('dice clicked dados', diceValues);
+    if(first_turn_response === false){//por probar, puede que no funcione bien
+        document.querySelector('.active-player span').innerText =
+        `Es el turno de ${user_name}`;
+    }
     if (eligible_pieces != undefined){
         console.log('dice clicked piezas elegibles', eligible_pieces);
        
@@ -450,11 +449,17 @@ socket.on('dice_clicked', data => {
         document.querySelector('.active-player span').innerText =
         `El primer turno es para ${user_name}.\n
         Tienes 3 intentos para sacar tus fichas de la cárcel.`;
+        if (eligible_pieces.length > 0) {
+            UI.highlightPieces(player, eligible_pieces);
+            document.querySelector('.active-player span').innerText =
+            `${user_name} puedes mover tus fichas.`;
+        }
     }
-    else{
-        document.querySelector('.active-player span').innerText =
-        `Es el turno de ${user_name}`;
-    }
+    // else{
+    //     document.querySelector('.active-player span').innerText =
+    //     `Es el turno de ${user_name}`;
+    // }
+  
     console.log('el user_name actual es ', user_name);
     console.log('el usernameSet actual es ', usernameSet);
     console.log('el local_player_id actual es ', local_player_id);
@@ -536,13 +541,16 @@ socket.on('piece_clicked', data => {
     const userAfter = data.userAfter;
     const userAfterName = data.userAfterName;
     console.log(data);
-
-   
-
   
     // Move all pieces to the start position
-    [0, 1, 2, 3].forEach(piece => {
-        UI.setPiecePosition(player, piece, currentPositions[player][piece])
+    ['P1', 'P2', 'P3', 'P4'].forEach(player => {
+        if (currentPositions[player] !== undefined) { // Verifica que currentPositions[player] exista
+            [0, 1, 2, 3].forEach(piece => {
+                if (currentPositions[player][piece] !== undefined) {
+                    UI.setPiecePosition(player, piece, currentPositions[player][piece]);
+                }
+            });
+        }
     });
 
     if (isunhiglighted_pieces){

@@ -90,19 +90,29 @@ class App:
     # Crear un nuevo jugador
     def create_player(self, data):
         print("data", data)
-        name = data["user_name"]
+        name = data["user_name"]     
         color_piece = data["color_piece"]
         status = data["status"]
         player_id = data['color_piece']
            # Assign player number based on color
         
         
+        # Comprobar si el nombre ya existe
         if name in self.__players:
             return {"success": False, "message": f"Jugador '{name}' ya existe."}
         
         # Verificar si el color de la pieza seleccionada por el jugador ya fue seleccionado por otro jugador
         if self.__avaliable_pieces.count(color_piece) == 0:
-            return {"success": False, "message": f"Color '{color_piece}' fue seleccionado por otro jugador."}
+            color = ''
+            if color_piece == 'P1':
+                color = 'Azul'
+            elif color_piece == 'P2':
+                color = 'Amarillo'
+            elif color_piece == 'P3':
+                color = 'Verde'
+            elif color_piece == 'P4':
+                color = 'Rojo'
+            return {"success": False, "message": f"Color '{color}' fue seleccionado por otro jugador."}
         
         # Verificar si es el primer jugador en conectarse
         if len(self.__players) == 0:
@@ -138,25 +148,6 @@ class App:
         else:
             return {"success": False, "message": f"Player '{name}' no existe."}
 
-    '''def create_room(self, data):
-        name = data["name"]
-        num_of_players = data["playersQuantity"]
-        password = data["password"]
-        room_data = data["room_data"]
-        if name in self.__rooms:
-            return {"success": False, "message": f"Room '{name}' already exists."}
-        else:
-            print("dadaname")
-            self.__rooms[name] = {
-                "name": name,
-                "password": password,
-                "room_data": room_data,
-                "num_of_players": num_of_players
-            }
-            return {"success": True, "message": f"Room '{name}' created successfully."}
-        
-    def get_rooms(self):
-        return self.__rooms'''
     
     # Obtener la lista de jugadores conectados
     def get_players(self):
@@ -210,9 +201,6 @@ class Ludo():
         self.player_for_elegible_pieces = None
 
         print(f"PLAYERS: {self.PLAYERS}")
-
-        # self.determine_first_turn()
-        # self.reset_game()
 
     @property
     def dice_value(self):
@@ -351,8 +339,8 @@ class Ludo():
         
         if dice_attemps_firts_turn[color_piece] > 1 and self.dice_value == self.dice_value2:
             dice_attemps_firts_turn[color_piece]  = 0
-            self.first_turn_response = False
-            eligible_pieces = self.check_for_eligible_pieces()
+            # self.first_turn_response = False
+            eligible_pieces = self.get_eligible_pieces(color_piece)
             self.turn = 0
             player = self.PLAYERS[self.turn] 
             return {"dice_values": (self.dice_value, self.dice_value2), 
@@ -385,6 +373,7 @@ class Ludo():
 
         if self.dice_value != self.dice_value2 and self.isJailOut[player] == True: #The player get out of jail and the dice are not the same
             # self.isJailOut[player] = False
+            self.first_turn_response = False
 
             # player = self.PLAYERS[(self.turn + 1) % len(self.PLAYERS)]
             if (self.first_exit[color_piece] == True):#The player has already exited from jail a long time ago
@@ -560,24 +549,3 @@ if __name__ == "__main__":
 
     # eligible_pieces = ludo.on_dice_click(color_piece='blue')
     # print("Eligible pieces:", eligible_pieces)
-
-
-'''def create_room(self, data):
-        name = data["name"]
-        num_of_players = data["playersQuantity"]
-        password = data["password"]
-        room_data = data["room_data"]
-        if name in self.__rooms:
-            return {"success": False, "message": f"Room '{name}' already exists."}
-        else:
-            print("dadaname")
-            self.__rooms[name] = {
-                "name": name,
-                "password": password,
-                "room_data": room_data,
-                "num_of_players": num_of_players
-            }
-            return {"success": True, "message": f"Room '{name}' created successfully."}
-        
-    def get_rooms(self):
-        return self.__rooms'''
