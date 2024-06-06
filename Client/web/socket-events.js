@@ -226,14 +226,24 @@ socket.on('users_list_update', players => {
     }else{
         for (let player in players) {
             const listItem = document.createElement('li');
-            listItem.textContent = `name: ${players[player].name}, color_piece: ${players[player].color_piece}, Status: ${players[player].status}`;
+
+            if (players[player].color_piece === 'P1') {
+                listItem.textContent = `Nombre: ${players[player].name}, Color: Azul`;
+            } else if (players[player].color_piece === 'P2') {
+                listItem.textContent = `Nombre: ${players[player].name}, Color: Amarillo`;
+            } else if (players[player].color_piece === 'P3') {
+                listItem.textContent = `Nombre: ${players[player].name}, Color: Verde`;
+            } else if (players[player].color_piece === 'P4') {
+                listItem.textContent = `Nombre: ${players[player].name}, Color: Rojo`;
+            }
+            
             playersList.appendChild(listItem);
 
             if (players[player].name === usernameSet){
                 local_player_id = players[player].player_id;
 
                 if(players[player].primero){                    
-                    document.getElementById('start').style.display = 'block';
+                    document.getElementById('start').style.display = 'flex';
                 }
             }
         }
@@ -278,7 +288,13 @@ function startCountdown() {
             document.getElementById('ludo-container').style.display = 'block';
             document.getElementById('container2').style.display = 'none';
             document.getElementById('container').style.display = 'none';
+            document.getElementById('container_2').style.display = 'none';
+            document.getElementById('button-group').style.display = 'none';
+            document.body.style.backgroundImage = "none";
+            document.body.style.backgroundColor = "white";
             document.getElementById('player-message').style.display = 'block';
+            document.getElementById('player-message').innerHTML = 'Jugador: ' + usernameSet + '<br/>Color: ' + color_piece_player;
+
             //document.getElementById('time').style.display = 'none';
 
             return;
@@ -296,11 +312,15 @@ function change_btns_lobby(action){
         document.getElementById('connect').disabled = true;
         document.getElementById('user_name').disabled = true;
         document.getElementById('color').disabled = true;
+        document.getElementById('instrucciones').disabled = true;
+        document.getElementById('creditos').disabled = true;
     } else if (action === 'disconnect') {
         document.getElementById('connect').textContent = 'Conectar';
         document.getElementById('connect').disabled = false;
         document.getElementById('user_name').disabled = false;
         document.getElementById('color').disabled = false;
+        document.getElementById('instrucciones').disabled = false;
+        document.getElementById('creditos').disabled = false;
     }
 }
 
@@ -314,6 +334,8 @@ function activate_room() {
         //game_ready = game_status;
         if (game_status['run'] === true) {
             document.getElementById('container').style.display = 'none';
+            document.getElementById('container_2').style.display = 'none';
+            document.getElementById('button-group').style.display = 'none';
             document.getElementById('container2').style.display = 'block';
             //document.getElementById('connect2').disabled = true;
 

@@ -1,0 +1,179 @@
+            /* Estilos para el fondo transparente de la cuenta regresiva */
+            #countdown-overlay {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                font-size: 24px;
+                z-index: 3;
+            }
+
+            #countdown {
+                font-size: 50px;
+                z-index: 3;
+            }
+
+            #countdown2 {
+                font-size: 30px;
+                color: lightgray;
+                z-index: 3;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                background-image: url('fondo.jpg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                height: 100vh;
+                width: 100vh;
+                /*display: flex;*/
+                justify-content: center;
+                align-items: center;
+            }
+
+            .container {
+                background: rgb(194, 193, 191);
+                padding: 20px;
+                border-radius: 40px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+                text-align: center;
+                width: 550px;
+                position: fixed; /* Posiciona el elemento de forma absoluta */
+                top: 41%; /* Centra verticalmente */
+                right: -19%; /* Centra horizontalmente */
+                transform: translate(-50%, -50%);
+            }
+
+            .container_2 {
+                background: rgb(194, 193, 191);
+                padding: 20px;
+                border-radius: 40px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+                text-align: center;
+                width: 550px;
+                position: fixed; 
+                top: 36%; 
+                left: 26%; 
+                transform: translate(-50%, -50%);
+            }
+
+            .parchis {
+                font-family: 'Roboto Slab', cursive;
+                font-size: 80px;
+                color: black;
+                padding: 20px;
+                text-align: center;
+                border-radius: 10px;
+                position: relative;
+                top: 50%;
+                left: 50%;
+                bottom: 50%;
+                transform: translate(-50%, -10%);
+                margin-bottom: -10%;
+            }
+
+            .form-group {
+                margin-bottom: 0px;
+            }
+
+            label {
+                display: block;
+                font-family: 'Roboto Slab', cursive;
+                font-size: 35px;
+                margin-bottom: 1px;
+                font-weight: bold;
+            }
+
+            input[type="text"], select {
+                width: 90%;
+                padding: 8px;
+                font-size: 20px;
+                margin-bottom: 12px;
+                border: 3px solid #ccc;
+                border-radius: 50px;
+            }
+
+            .button-group {
+                margin-top: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .button-group button {
+                margin: 5px;
+                padding: 25px 20px;
+                border: none;
+                border-radius: 55px;
+                cursor: pointer;
+                font-size: 20px;
+            }
+
+            button#connect {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            button#disconnect {
+                background-color: #f44336;
+                color: white;
+            }
+
+            button#start {
+                background-color: #008CBA;
+                color: white;
+            }
+
+            button#instrucciones {
+                background-color: #f7ff00;
+                color: black;
+            }
+
+            button#creditos {
+                background-color: #686ca0;
+                color: black;
+            }
+
+            .name-list {
+                margin-top: 10px;
+            }
+
+            .name-list ul {
+                list-style-type: none;
+                padding: 0;
+            }
+
+            .name-list li {
+                background: #f9f9f9;
+                margin: 5px 0;
+                padding: 1px;
+                border: 4px solid #e0cc10;
+                border-radius: 4px;
+                font-size: 20px;
+            }
+
+            #player-message {
+                display: none;
+                position: fixed;
+                top: 10px;
+                left: 12%;
+                transform: translateX(-50%);
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 10px;
+                font-size: 20px;
+                z-index: 10;
+            }

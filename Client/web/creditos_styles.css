@@ -1,0 +1,61 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-image: url('fondo.jpg'); /* Cambia 'background.jpg' por el nombre de tu imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 120vh;
+    width: 150vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.titulo{
+    font-size: 250%;
+    position: absolute;
+    top: 0;
+    right: 40%;
+
+}
+
+.parrafos {
+    font-size: 140%;
+    margin-top: 0%;
+    position: absolute;
+    top: 21%;
+    left: 25%;
+}
+
+.parrafos_2 {
+    font-size: 140%;
+    margin-top: 5%;
+    position: absolute;
+    top: 40%;
+    left: 25%;
+}
+
+.parrafos_3 {
+    font-size: 140%;
+    margin-top: 5%;
+    position: absolute;
+    top: 75%;
+    left: 25%;
+}
+
+.button_atras button {
+    margin: 20px;
+    background-color: #796cc0;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 55px;
+    cursor: pointer;
+    font-size: 50px;
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}
+

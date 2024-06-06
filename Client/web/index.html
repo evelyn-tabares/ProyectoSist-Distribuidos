@@ -7,38 +7,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./ludo/style.css">
         <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="style_lobby.css">
 
-        <style>
-            /* Estilos para el fondo transparente de la cuenta regresiva */
-            #countdown-overlay {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                font-size: 24px;
-            }
-
-            #countdown {
-                font-size: 50px;
-            }
-
-            #countdown2 {
-                font-size: 30px;
-                color: lightgray;
-            }
-        </style>    
 
     </head>
     <script type="text/javascript" src="/eel.js"></script>
     <script type="text/javascript" src="UI.js"></script>
     <script type="text/javascript" src="/Client/web/UI.js"></script>
+    <script type="text/javascript" src="script.js"></script>
 
     <body>
         <script type="module">
@@ -53,9 +29,8 @@
             <div id="countdown">Iniciando...</div>
             <div id="countdown2"></div>
         </div>
-
-        <!-- Formulario de registro cuando el juego no ha empezado -->
-        <div class="container" id="container" style="display: none;">
+        
+        <!--<div class="container" id="container" style="display: none;">
             <div class="left-side">
                 <input type="text" id="user_name" placeholder="Nombre de usuario">
                 <select id="color">
@@ -68,7 +43,7 @@
             <div class="right-side">
                 <h2>Jugadores conectados: </h2>
                 <ul id="player-list">
-                    <!--Se llena de manera automatica consultando al servidor-->
+                    <li>Esperando jugadores...</li>
                 </ul>
             </div>
             <div class="container">
@@ -76,11 +51,48 @@
                 <button id="disconnect">Desconectar</button>
                 <button id="start" style="display: none;">Iniciar Partida</button>
             </div>
-        </div> 
-        
-            <!--Formulario de registro cuando el juego ya empezó-->
+        </div> -->
+
+        <div class="container" id="container">
+            <div class="parchis">Parchís.</div>
+    
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="user_name" name="nombre">
+            </div>
+            
+            <div class="form-group">
+                <label for="color">Color:</label>
+                <select id="color" name="color">
+                    <option value="P1">Azul</option>
+                    <option value="P2">Amarillo</option>
+                    <option value="P3">Verde</option>
+                    <option value="P4">Rojo</option>
+                </select>
+            </div>
+            
+            <div class="button-group" id="button-group">
+                <button id="connect">Conectar</button>
+                <button id="disconnect">Desconectar</button>
+                <button id="start" style="display: none;">Iniciar Juego</button>
+                <button id="instrucciones" onclick="redirectToInstructions()">Instrucciones</button>
+                <button id="creditos" onclick="redirectToCredits()">Créditos</button>
+            </div>
+            
+        </div>
+    
+        <div class="container_2" id="container_2">
+            <div class="name-list">
+                <h3>Lista de Nombres</h3>
+                <ul id="player-list">
+                    <li>Esperando jugadores...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!--Formulario de registro cuando el juego ya empezó-->
         <div class="container" id="container2" style="display: none;">
-                <h1>juego en progreso</h1>
+                <h1>Juego en progreso</h1>
                 <div class="left-side">
                     <input type="text" id="user_name2" placeholder="Nombre de usuario">
                     <select id="color2">
@@ -90,11 +102,10 @@
                 <div class="right-side" id="spaces">
                     <h2>Espacios disponibles: </h2>
                 </div>
-                <div class="container">
-                </div>
         </div>  
         <div id="player-message" style="display: none;"></div>
 
+        <!--Tablero de juego-->
         <div class="ludo-container" id="ludo-container" style="display: none;">
             <div class="ludo">
                 <div class="player-pieces">
@@ -135,7 +146,7 @@
                 <h2 class="active-player"><span></span> </h2>
             </div>
         </div>
-        <script src="./main.js" type="module"></script>
+        <script src="./main.js" type="module"></script>        
         <script src="./socket-events.js" type="module"></script> 
     </body>
 </html>
